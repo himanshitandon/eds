@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+
+
 /* eslint-env browser */
 function sampleRUM(checkpoint, data) {
   // eslint-disable-next-line max-len
@@ -539,14 +541,15 @@ async function fetchPlaceholders(prefix = 'default') {
  * @param {*} content two dimensional array or string or object of content
  */
 function buildBlock(blockName, content) {
-  const table = Array.isArray(content) ? content : [[content]];
+  const table = Array.isArray(content) ? content : [[content]];  
   const blockEl = document.createElement('div');
-  // build image block nested div structure
-  blockEl.classList.add(blockName);
+  blockEl.classList.add(blockName); 
+  const tableEl = document.createElement('table');
+  const tbodyEl = document.createElement('tbody'); 
   table.forEach((row) => {
-    const rowEl = document.createElement('div');
+    const rowEl = document.createElement('tr');
     row.forEach((col) => {
-      const colEl = document.createElement('div');
+      const colEl = document.createElement('td');
       const vals = col.elems ? col.elems : [col];
       vals.forEach((val) => {
         if (val) {
@@ -559,8 +562,11 @@ function buildBlock(blockName, content) {
       });
       rowEl.appendChild(colEl);
     });
-    blockEl.appendChild(rowEl);
+    tbodyEl.appendChild(rowEl);
   });
+  tableEl.appendChild(tbodyEl);
+  blockEl.appendChild(tableEl);
+  hideTextInFirstTableCell(blockEl);
   return blockEl;
 }
 
@@ -585,20 +591,30 @@ async function loadBlock(block) {
               await mod.default(block);
             }
           } catch (error) {
-            // eslint-disable-next-line no-console
             console.log(`failed to load module for ${blockName}`, error);
           }
+          hideTextInFirstTableCell(block);
           resolve();
         })();
       });
       await Promise.all([cssLoaded, decorationComplete]);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.log(`failed to load block ${blockName}`, error);
     }
     block.dataset.blockStatus = 'loaded';
   }
   return block;
+}
+
+/**
+ * Hides the text content inside the first td or div element inside the block.
+ * @param {Element} block The block element
+ */
+function hideTextInFirstTableCell(block) {
+  const firstTd = block.querySelector('td');
+  if (firstTd) {
+    firstTd.style.visibility = 'hidden';
+  }
 }
 
 /**
@@ -612,10 +628,14 @@ function decorateBlock(block) {
     block.dataset.blockName = shortBlockName;
     block.dataset.blockStatus = 'initialized';
     wrapTextNodes(block);
+    hideTextInFirstTableCell(block);
     const blockWrapper = block.parentElement;
     blockWrapper.classList.add(`${shortBlockName}-wrapper`);
+    
     const section = block.closest('.section');
-    if (section) section.classList.add(`${shortBlockName}-container`);
+    if (section) {
+      section.classList.add(`${shortBlockName}-container`);
+    }
   }
 }
 

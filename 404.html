@@ -45,6 +45,38 @@
     main.error .error-number text {
       font-family: monospace;
     }
+
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    text-align: center;
+    padding: 50px;
+}
+h1 {
+    color: #ff3333;
+}
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #ffe6e6;
+    border: 1px solid #ffcccc;
+    margin-bottom: 15px;
+}
+
+.cta-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+}
   </style>
   <link rel="stylesheet" href="/styles/lazy-styles.css">
 </head>
@@ -60,7 +92,19 @@
       <p class="button-container">
         <a href="/" class="button secondary error-button-home">Go home</a>
       </p>
+
+      <h1>Oops! We couldn't find the page you were looking for.</h1>
+      <p>It seems like the page you are looking for does not exist. Please check the URL or return to the   <a href="/" class="button secondary error-button-home">Go home</a>.</p>
+      <p>If you need further assistance, contact our support team.</p>
     </div>
+    <div class="custom-block">
+      <c:if test="${empty properties.title}">
+          <p class="error-message">Error: Title is missing. Please add a title for this block.</p>
+      </c:if>
+      <c:if test="${empty properties.cta}">
+          <p class="error-message">Error: CTA link is missing. Please add a valid CTA link.</p>
+      </c:if>
+  </div>
   </main>
   <footer></footer>
 </body>
